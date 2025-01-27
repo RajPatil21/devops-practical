@@ -20,7 +20,9 @@ public:
     void addEdge(int u, int v, int weight);
     void removeEdge(int u, int v);
     void displayGraph();
-
+    bool isCyclic(); // Detect cycle in the graph
+    bool isCyclicUtil(int node, unordered_map<int, bool> &visited, unordered_map<int, bool> &recStack);
+    
     vector<int> dijkstra(int source);
     void dfs(int start);
     void bfs(int start);
