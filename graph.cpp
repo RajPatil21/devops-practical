@@ -149,3 +149,62 @@ void Graph::importFromFile(const string &filename) {
     file.close();
     cout << "Graph imported from " << filename << endl;
 }
+
+bool Graph::isCyclicUtil(int node, unordered_map<int, bool> &visited, unordered_map<int, bool> &recStack) {
+    visited[node] = true;
+    recStack[node] = true;
+
+    for (auto neighbor : adjList[node]) {
+        if (!visited[neighbor.first] && isCyclicUtil(neighbor.first, visited, recStack)) {
+            return true;
+        } else if (recStack[neighbor.first]) {
+            return true;
+        }
+    }
+
+    recStack[node] = false;
+    return false;
+}
+
+bool Graph::isCyclic() {
+    unordered_map<int, bool> visited, recStack;
+
+    for (auto node : adjList) {
+        if (!visited[node.first]) {
+            if (isCyclicUtil(node.first, visited, recStack)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Graph::isCyclicUndirectedUtil(int node, unordered_map<int, bool> &visited, int parent) {
+    visited[node] = true;
+
+    for (auto neighbor : adjList[node]) {
+        if (!visited[neighbor.first]) {
+            if (isCyclicUndirectedUtil(neighbor.first, visited, node)) {
+                return true;
+            }
+        } else if (neighbor.first != parent) { // Back edge detected
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Graph::isCyclicUndirected() {
+    unordered_map<int, bool> visited;
+
+    for (auto node : adjList) {
+        if (!visited[node.first]) {
+            if (isCyclicUndirectedUtil(node.first, visited, -1)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
